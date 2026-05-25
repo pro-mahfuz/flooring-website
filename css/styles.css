@@ -370,7 +370,7 @@ h3 {
 
 .main-nav .submenu {
   position: absolute;
-  top: calc(100% + 0.55rem);
+  top: calc(100% + 0.08rem);
   left: 0;
   min-width: 16rem;
   padding: 0.55rem;
@@ -389,7 +389,7 @@ h3 {
   z-index: 40;
 }
 
-.main-nav .has-submenu:hover > .submenu,
+.main-nav .has-submenu.is-hover-open > .submenu,
 .main-nav .has-submenu:focus-within > .submenu {
   opacity: 1;
   visibility: visible;

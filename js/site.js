@@ -31,6 +31,7 @@ if (heroSlider) {
   const heroDotList = heroSlider.querySelector(".hero-slider-dots");
   const heroPrev = heroSlider.querySelector("[data-hero-prev]");
   const heroNext = heroSlider.querySelector("[data-hero-next]");
+  const heroSlideFocusableSelector = "a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [tabindex]";
   const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
   let activeHeroIndex = heroSlides.findIndex((slide) => slide.classList.contains("is-active"));
   let heroAutoplay = null;
@@ -60,6 +61,33 @@ if (heroSlider) {
     heroSlides[dotIndex]?.setAttribute("aria-labelledby", dot.id);
   });
 
+  const syncHeroSlideInteractivity = (slide, isActive) => {
+    if (!slide) return;
+
+    slide.toggleAttribute("inert", !isActive);
+    if ("inert" in slide) {
+      slide.inert = !isActive;
+    }
+
+    Array.from(slide.querySelectorAll(heroSlideFocusableSelector)).forEach((control) => {
+      if (isActive) {
+        const originalTabIndex = control.dataset.heroSlideTabindex;
+        if (originalTabIndex === "__none__") {
+          control.removeAttribute("tabindex");
+        } else if (originalTabIndex) {
+          control.setAttribute("tabindex", originalTabIndex);
+        }
+        delete control.dataset.heroSlideTabindex;
+        return;
+      }
+
+      if (!("heroSlideTabindex" in control.dataset)) {
+        control.dataset.heroSlideTabindex = control.hasAttribute("tabindex") ? control.getAttribute("tabindex") : "__none__";
+      }
+      control.setAttribute("tabindex", "-1");
+    });
+  };
+
   const setHeroSlide = (index) => {
     if (!heroSlides.length) return;
 
@@ -69,6 +97,7 @@ if (heroSlider) {
       const isActive = slideIndex === activeHeroIndex;
       slide.classList.toggle("is-active", isActive);
       slide.setAttribute("aria-hidden", String(!isActive));
+      syncHeroSlideInteractivity(slide, isActive);
     });
 
     heroDots.forEach((dot, dotIndex) => {
@@ -223,6 +252,10 @@ const closeMobileNav = (restoreFocus = false) => {
 const expandableMenuItems = mainNav
   ? Array.from(mainNav.querySelectorAll(".has-submenu, .submenu-group")).filter((item) => getDirectChildByClass(item, "submenu"))
   : [];
+const desktopHoverMenus = mainNav
+  ? Array.from(mainNav.querySelectorAll(".has-submenu")).filter((item) => getDirectChildByClass(item, "submenu"))
+  : [];
+const desktopHoverCloseTimers = new WeakMap();
 
 const setSubmenuExpanded = (item, isExpanded) => {
   item.classList.toggle("is-expanded", isExpanded);
@@ -233,6 +266,65 @@ const setSubmenuExpanded = (item, isExpanded) => {
     toggle.setAttribute("aria-label", `${isExpanded ? "Collapse" : "Expand"} ${label} menu`);
   }
 };
+
+const clearDesktopHoverTimer = (item) => {
+  const existingTimer = desktopHoverCloseTimers.get(item);
+  if (!existingTimer) return;
+  window.clearTimeout(existingTimer);
+  desktopHoverCloseTimers.delete(item);
+};
+
+const setDesktopHoverOpen = (item, isOpen) => {
+  if (!item) return;
+
+  clearDesktopHoverTimer(item);
+
+  if (mobileNavQuery.matches) {
+    item.classList.remove("is-hover-open");
+    return;
+  }
+
+  if (isOpen) {
+    item.classList.add("is-hover-open");
+    return;
+  }
+
+  const closeTimer = window.setTimeout(() => {
+    item.classList.remove("is-hover-open");
+    desktopHoverCloseTimers.delete(item);
+  }, 140);
+
+  desktopHoverCloseTimers.set(item, closeTimer);
+};
+
+desktopHoverMenus.forEach((item) => {
+  const link = getDirectAnchor(item);
+  const submenu = getDirectChildByClass(item, "submenu");
+
+  link?.addEventListener("mouseenter", () => {
+    setDesktopHoverOpen(item, true);
+  });
+
+  submenu?.addEventListener("mouseenter", () => {
+    setDesktopHoverOpen(item, true);
+  });
+
+  item.addEventListener("mouseleave", () => {
+    setDesktopHoverOpen(item, false);
+  });
+
+  item.addEventListener("focusin", () => {
+    setDesktopHoverOpen(item, true);
+  });
+
+  item.addEventListener("focusout", () => {
+    window.setTimeout(() => {
+      if (!item.contains(document.activeElement)) {
+        setDesktopHoverOpen(item, false);
+      }
+    }, 0);
+  });
+});
 
 expandableMenuItems.forEach((item, index) => {
   const link = getDirectAnchor(item);
@@ -336,6 +428,13 @@ if (mainNav) {
 }
 
 const handleMobileNavViewportChange = () => {
+  if (mobileNavQuery.matches) {
+    desktopHoverMenus.forEach((item) => {
+      clearDesktopHoverTimer(item);
+      item.classList.remove("is-hover-open");
+    });
+  }
+
   applyMobileMenuState(true);
 };
 
