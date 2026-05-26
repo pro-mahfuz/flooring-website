@@ -17,6 +17,8 @@
   --radius-md: 18px;
   --radius-sm: 12px;
   --max: 1180px;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-serif: ui-serif, "Iowan Old Style", "Palatino Linotype", "Book Antiqua", Georgia, serif;
 }
 
 *,
@@ -31,7 +33,7 @@ html {
 
 body {
   margin: 0;
-  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
   color: var(--ink);
   background:
     radial-gradient(circle at top left, rgba(190, 159, 89, 0.18), transparent 32%),
@@ -92,7 +94,7 @@ h2,
 h3,
 h4 {
   margin: 0;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-serif);
   line-height: 0.95;
   letter-spacing: -0.03em;
   color: var(--ink);
@@ -225,7 +227,7 @@ h3 {
   display: grid;
   place-items: center;
   color: #fff7ea;
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-serif);
   font-size: 1.55rem;
   box-shadow: 0 10px 28px rgba(159, 86, 50, 0.28);
 }
@@ -1017,7 +1019,7 @@ main {
   display: block;
   font-size: clamp(2rem, 4vw, 3rem);
   color: var(--accent-deep);
-  font-family: "Cormorant Garamond", Georgia, serif;
+  font-family: var(--font-serif);
   line-height: 1;
   margin-bottom: 0.55rem;
 }
