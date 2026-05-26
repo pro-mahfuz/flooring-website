@@ -1937,6 +1937,36 @@ textarea {
 }
 
 @media (max-width: 560px) {
+  body {
+    background: #f4efe6;
+  }
+
+  .hero-copy {
+    gap: 1rem;
+  }
+
+  .hero-copy h1 {
+    max-width: 14ch;
+    font-size: clamp(2.15rem, 8.8vw, 3rem);
+    line-height: 0.96;
+    letter-spacing: -0.03em;
+  }
+
+  .hero-copy h1::after {
+    width: 4rem;
+    height: 0.3rem;
+    margin-top: 0.6rem;
+  }
+
+  .hero-copy p {
+    font-size: 1rem;
+  }
+
+  .site-header {
+    backdrop-filter: none;
+    background: #f9f1e3;
+  }
+
   .brand {
     gap: 0.6rem;
   }
@@ -2015,6 +2045,7 @@ textarea {
     bottom: 0.65rem;
     padding: 0.8rem 0.82rem;
     border-radius: 16px;
+    backdrop-filter: none;
   }
 
   .hero-visual-note strong {
