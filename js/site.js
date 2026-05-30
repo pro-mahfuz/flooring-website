@@ -602,6 +602,13 @@ if (!floatingUi.hasAttribute("data-floating-ui-root")) {
     <button class="floating-action floating-action--scroll" type="button" data-scroll-top aria-label="Scroll to top">
       <span class="floating-icon">&#8593;</span>
     </button>
+    <a class="floating-action floating-action--call" href="tel:+971568163016" data-call-action aria-label="Call +971 56 816 3016">
+      <span class="floating-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path fill="currentColor" d="M6.62 10.79a15.46 15.46 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.11.37 2.3.56 3.52.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.22.19 2.41.56 3.52a1 1 0 0 1-.24 1.01l-2.2 2.26Z"/>
+        </svg>
+      </span>
+    </a>
     <button class="floating-action floating-action--whatsapp" type="button" data-open-whatsapp aria-label="Open WhatsApp request form" aria-haspopup="dialog" aria-controls="whatsapp-backdrop">
       <span class="floating-icon" aria-hidden="true">
         <svg viewBox="0 0 24 24" focusable="false">
@@ -641,6 +648,24 @@ if (!floatingUi.hasAttribute("data-floating-ui-root")) {
   </div>
 `;
   document.body.appendChild(floatingUi);
+}
+
+const floatingTools = floatingUi.querySelector(".floating-tools");
+if (floatingTools && !floatingTools.querySelector("[data-call-action]")) {
+  const callAction = document.createElement("a");
+  callAction.className = "floating-action floating-action--call";
+  callAction.href = "tel:+971568163016";
+  callAction.setAttribute("data-call-action", "");
+  callAction.setAttribute("aria-label", "Call +971 56 816 3016");
+  callAction.innerHTML = `
+      <span class="floating-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path fill="currentColor" d="M6.62 10.79a15.46 15.46 0 0 0 6.59 6.59l2.2-2.2a1 1 0 0 1 1.01-.24c1.11.37 2.3.56 3.52.56a1 1 0 0 1 1 1V20a1 1 0 0 1-1 1C10.61 21 3 13.39 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.22.19 2.41.56 3.52a1 1 0 0 1-.24 1.01l-2.2 2.26Z"/>
+        </svg>
+      </span>
+    `;
+  const whatsappAction = floatingTools.querySelector("[data-open-whatsapp]");
+  floatingTools.insertBefore(callAction, whatsappAction || null);
 }
 
 const scrollTopButton = document.querySelector("[data-scroll-top]");
